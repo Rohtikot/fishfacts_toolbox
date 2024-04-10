@@ -4,7 +4,8 @@ from utils.replace_missing_headings import replace_heading_error
 from utils.calculate_distance import calculate_distance
 from utils.calculate_timedelta import calculate_timedelta
 from utils.calculate_mean_speed import calculate_mean_speed_between_points
-
+from plotting.plot_track import plot_vessel_track
+from plotting.utils import get_speed_color
 
 pd.set_option('display.width', None)
 
@@ -24,7 +25,10 @@ def main():
     int_df['timedelta'] = calculate_timedelta(int_df)
     int_df['mean_speed'] = calculate_mean_speed_between_points(int_df)
 
-    print(int_df)
+    ms = plot_vessel_track(df)
+    ms = plot_vessel_track(int_df)
+
+    ms.save('test.html')
 
 
 if __name__ == '__main__':

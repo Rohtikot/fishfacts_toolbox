@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from utils import get_speed_color
+from plotting.utils import get_speed_color
 import pandas as pd
 import folium
 import os
@@ -48,6 +48,8 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
 
 # Create plot function that plots eez zones as layer on top of folium map. Extra layers need to be each its own layer.
 def plot_eez_zones(m: folium.Map = None) -> folium.Map:
+    # TODO: make this available throughout the entire project. The files won't be found when this module is being used
+    #  elsewhere. So make it executable from different directories as well.
     eez_zones_folder = os.listdir('../zones/eez_zones')
     other_zones_folder = os.listdir('../zones/other_zones')
 
