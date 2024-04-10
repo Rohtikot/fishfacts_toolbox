@@ -55,27 +55,23 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
     if m is None:
         m = initialize_map()
 
+    # TODO: Missing layers for "other_zones_folder"
+
     # Plot EEZ zones
+    polygon_group = folium.FeatureGroup(name='EEZ zones')
     for zone in eez_zones_folder:
         polygon_df = pd.read_csv(os.path.join('../zones/eez_zones', zone))
-
-        # TODO: Missing the feature group here (toggle-able eez zones on the map. Plan is to make it a passable argument
-        #  for the "plot_polygon" function and add it as a feature group there. See latest ChatGPT example in
-        #  conversation "Plotting module 09.04.2024"
-        polygon_group_eez = folium.FeatureGroup(name='EEZ zones')
-        m = plot_polygon(polygon_df, m=m)
+        polygon = plot_polygon(polygon_df)
+        polygon.add_to(polygon_group)
+        polygon_group.add_to(m)
 
     return m
 
 
 # Plot single polygon
-def plot_polygon(input_df: DataFrame, color: str = 'grey', m: folium.Map = None) -> folium.Map:
-    # If m argument is not passed, create new map object
-    if m is None:
-        m = initialize_map(tiles='light')
-
+def plot_polygon(input_df: DataFrame, color: str = 'grey') -> folium.Polygon:
     # Plot polygon
-    folium.Polygon(
+    polygon = folium.Polygon(
         locations=zip(input_df['latitude'], input_df['longitude']),
         color=color,
         weight=0.5,
@@ -83,23 +79,27 @@ def plot_polygon(input_df: DataFrame, color: str = 'grey', m: folium.Map = None)
         fill=False,
         fill_opacity=0,
         fill_color=color
-    ).add_to(m)
+    )
+
+    return polygon
+
+
+# Function to initialize folium map object
+def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
+    m = folium.Map(location=(lat, lon), zoom_start=5)
+
+    tiles = [
+        'OpenStreetMap',
+        'CartoDB positron',
+        'Esri NatGeoWorldMap',
+        'CartoDB dark_matter'
+    ]
+
+    for tile in tiles:
+        folium.TileLayer(tile).add_to(m)
 
     return m
 
 
-# Function to initialize folium map object
-def initialize_map(lat: float = 62, lon: float = -7, tiles: str = 'dark') -> folium.Map:
-    if tiles.lower() == 'dark':
-        tile_setting = 'cartodb dark_matter'
-    else:
-        tile_setting = 'OpenStreetMap'
-
-    return folium.Map(location=(lat, lon), zoom_start=5, tiles=tile_setting)
-
-
 if __name__ == '__main__':
-    ms = plot_eez_zones()
-    ms.save('testpolygon.html')
-
     print('Run plot_track.py')
