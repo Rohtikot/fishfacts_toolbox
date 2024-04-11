@@ -14,11 +14,7 @@ def calculate_distance(input_df: DataFrame) -> Series:
     input_df['previous_longitude'] = input_df['longitude'].shift()
 
     return input_df.apply(
-        lambda row: get_distance(
-            row['latitude'], row['longitude'], row['previous_latitude'],
-            row['previous_longitude']), axis=1
-    ) * 0.539957  # convert km to nm
-
-
-if __name__ == '__main__':
-    print(f'Run {str(__file__).split('\\')[-1]}')
+        lambda row: get_distance(row['latitude'],
+                                 row['longitude'],
+                                 row['previous_latitude'],
+                                 row['previous_longitude']) * 0.539956803, axis=1)  # conversion to nm from km

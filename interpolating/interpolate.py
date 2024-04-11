@@ -22,7 +22,3 @@ def interpolate_dataframe(input_df: pd.DataFrame, interval: int = 15) -> pd.Data
     interpolated_df = pd.merge_asof(interpolated_df, input_df.drop(columns=['speed']), on='timestamp', direction='nearest')
 
     return interpolated_df[['timestamp', 'latitude', 'longitude', 'speed', 'heading']]
-
-
-if __name__ == '__main__':
-    print(f'Run {str(__file__).split('\\')[-1]}')

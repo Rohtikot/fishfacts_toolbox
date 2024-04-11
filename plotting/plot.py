@@ -13,6 +13,9 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
         mean_longitude = input_df['longitude'].mean()
         m = initialize_map(mean_latitude, mean_longitude)
 
+    m = plot_eez_zones(m)
+    m = plot_other_zones(m)
+
     # Get next latitude and longitude
     input_df['next_latitude'] = input_df['latitude'].shift(-1)
     input_df['next_longitude'] = input_df['longitude'].shift(-1)
@@ -41,8 +44,6 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
             popup=popup_text
         ).add_to(m)
 
-    m = plot_eez_zones(m)
-    m = plot_other_zones(m)
 
     folium.LayerControl().add_to(m)
 
@@ -149,8 +150,3 @@ def get_zone_name(file_name):
         return names[file_name]
     else:
         return file_name
-
-
-if __name__ == '__main__':
-    print('Run fn_plot.py')
-    plot_other_zones()

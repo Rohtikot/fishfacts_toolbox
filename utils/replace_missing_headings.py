@@ -52,7 +52,3 @@ def replace_heading_error(heading_values: Series) -> Series:
             heading_values_fixed.iloc[i] = interpolated_value
 
     return heading_values_fixed
-
-
-if __name__ == '__main__':
-    print(f'Run {str(__file__).split('\\')[-1]}')

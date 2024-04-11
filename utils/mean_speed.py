@@ -1,6 +1,6 @@
 from pandas import DataFrame, Series
-from utils.calculate_distance import calculate_distance
-from utils.calculate_timedelta import calculate_timedelta
+from utils.distance import calculate_distance
+from utils.timedelta import calculate_timedelta
 
 
 def calculate_mean_speed_between_points(input_df: DataFrame) -> Series:
