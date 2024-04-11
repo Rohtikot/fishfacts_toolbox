@@ -42,20 +42,24 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
         ).add_to(m)
 
     m = plot_eez_zones(m)
+    m = plot_other_zones(m)
+
+    folium.LayerControl().add_to(m)
 
     return m
 
 
 # Create plot function that plots eez zones as layer on top of folium map. Extra layers need to be each its own layer.
 def plot_eez_zones(m: folium.Map = None) -> folium.Map:
+    # If m argument is not passed, create new map object based on mean coordinates of input dataframe
+    if m is None:
+        m = initialize_map()
+
+    # Get path of EEZ zones
     cur_file_path = os.path.abspath(__file__)
     par_file_dir = os.path.dirname(cur_file_path)
     eez_zones_path = os.path.join(par_file_dir, '../zones/eez_zones')
     eez_zones_folder = os.listdir(eez_zones_path)
-
-    # If m argument is not passed, create new map object based on mean coordinates of input dataframe
-    if m is None:
-        m = initialize_map()
 
     # Plot EEZ zones
     polygon_group = folium.FeatureGroup(name='EEZ zones')
@@ -68,17 +72,48 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
     return m
 
 
+def plot_other_zones(m: folium.Map = None) -> folium.Map:
+    # If m argument is not passed, create new map object based on mean coordinates of input dataframe
+    if m is None:
+        m = initialize_map()
+
+    # Get path of other zones
+    cur_file_path = os.path.abspath(__file__)
+    par_file_dir = os.path.dirname(cur_file_path)
+    other_zones_path = os.path.join(par_file_dir, '../zones/other_zones')
+    other_zones_folder = os.listdir(other_zones_path)
+
+    # Plot other zones in a layer each
+    for zone in other_zones_folder:
+        group_name = get_zone_name(zone)
+        polygon_group = folium.FeatureGroup(name=group_name, show=False)
+        polygon_df = pd.read_csv(os.path.join(other_zones_path, zone))
+        polygon = plot_polygon(polygon_df, color='yellow', fill=True, fill_opacity=0.2, fill_color='yellow')
+        polygon.add_to(polygon_group)
+        polygon_group.add_to(m)
+
+    return m
+
+
 # Plot single polygon
-def plot_polygon(input_df: DataFrame, color: str = 'grey') -> folium.Polygon:
+def plot_polygon(input_df: DataFrame, color: str = 'grey', **kwargs) -> folium.Polygon:
+    # Default parameters for polygon
+    default_kwargs = {
+        'color': color,
+        'weight': 0.5,
+        'opacity': 0.5,
+        'fill': False,
+        'fill_opacity': 0,
+        'fill_color': color
+    }
+
+    # Merge custom kwargs with default kwargs
+    merged_kwargs = {**default_kwargs, **kwargs}
+
     # Plot polygon
     polygon = folium.Polygon(
         locations=zip(input_df['latitude'], input_df['longitude']),
-        color=color,
-        weight=0.5,
-        opacity=0.5,
-        fill=False,
-        fill_opacity=0,
-        fill_color=color
+        **merged_kwargs
     )
 
     return polygon
@@ -101,5 +136,21 @@ def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
     return m
 
 
+def get_zone_name(file_name):
+    # Function to return proper name according to passed file
+    names = {
+        'norway250_nm.csv': 'Norway 250 nm zone',
+        'norway250_nm_w_fjords.csv': 'Norway 250 m zone incl. fjords',
+        'norway_eez_north_62.csv': 'Norway EEZ north 62N',
+        'norway_eez_south_62.csv': 'Norway EEZ south 62N'
+    }
+
+    if file_name in names:
+        return names[file_name]
+    else:
+        return file_name
+
+
 if __name__ == '__main__':
-    print('Run plot_track.py')
+    print('Run fn_plot.py')
+    plot_other_zones()
