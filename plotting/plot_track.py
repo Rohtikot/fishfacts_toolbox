@@ -48,21 +48,19 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
 
 # Create plot function that plots eez zones as layer on top of folium map. Extra layers need to be each its own layer.
 def plot_eez_zones(m: folium.Map = None) -> folium.Map:
-    # TODO: make this available throughout the entire project. The files won't be found when this module is being used
-    #  elsewhere. So make it executable from different directories as well.
-    eez_zones_folder = os.listdir('../zones/eez_zones')
-    other_zones_folder = os.listdir('../zones/other_zones')
+    cur_file_path = os.path.abspath(__file__)
+    par_file_dir = os.path.dirname(cur_file_path)
+    eez_zones_path = os.path.join(par_file_dir, '../zones/eez_zones')
+    eez_zones_folder = os.listdir(eez_zones_path)
 
     # If m argument is not passed, create new map object based on mean coordinates of input dataframe
     if m is None:
         m = initialize_map()
 
-    # TODO: Missing layers for "other_zones_folder"
-
     # Plot EEZ zones
     polygon_group = folium.FeatureGroup(name='EEZ zones')
     for zone in eez_zones_folder:
-        polygon_df = pd.read_csv(os.path.join('../zones/eez_zones', zone))
+        polygon_df = pd.read_csv(os.path.join(eez_zones_path, zone))
         polygon = plot_polygon(polygon_df)
         polygon.add_to(polygon_group)
         polygon_group.add_to(m)
