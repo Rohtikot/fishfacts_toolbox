@@ -3,3 +3,4 @@ folium~=0.16.0
 scipy~=1.13.0
 numpy~=1.26.4
 tqdm~=4.66.1
+shapely~=2.0.3
