@@ -11,9 +11,9 @@ class ZoneAssigner:
 
     def which_zone(self, point):
         for zone in self.polygons:
-            if self.is_vessel_in_polygon(point, zone[1]):
+            if point.within(zone[1]):
                 return zone[0]  # return name of zone
-        return 'Undefined'
+        return None
 
     def get_polygons_from_dir(self, directory):
         polygons = []
@@ -32,9 +32,6 @@ class ZoneAssigner:
         polygon = Polygon(coordinates)
         return name, polygon
 
-    def is_vessel_in_polygon(self, point, polygon):
-        return True if polygon.contains(point) else False
-
     def assign_zones_to_dataframe(self, input_df):
         input_df['eez_zone'] = input_df.apply(
             lambda row: self.which_zone(Point(row['latitude'], row['longitude'])),
@@ -50,21 +47,16 @@ if __name__ == "__main__":
     df = pd.read_excel(path)
     time_read_end = time()
 
-    time_int_start = time()
-    df = interpolate_dataframe(df)
-    time_int_end = time()
-
     time_zone_start = time()
     df_with_zones = ZoneAssigner(zones_dir).assign_zones_to_dataframe(df)
     time_zone_end = time()
     print(df_with_zones.head())
 
     read_time = time_read_end - time_read_start
-    int_time = time_int_end - time_int_start
     zoning_time = time_zone_end - time_zone_start
 
     print(f"Df read time:\t{read_time:10.4f} s")
     print(f"Zn apply time:\t{zoning_time:10.4f} s")
-    print(f"Interp time:\t{int_time:10.4f} s")
 
-    print(f"Total time:\t\t{read_time+zoning_time+int_time:10.4f} s")
+    print(f"Total time:\t\t{read_time+zoning_time:10.4f} s")
+    print(f"{df.shape[0]} rows")
