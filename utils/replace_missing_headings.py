@@ -3,11 +3,10 @@ from pandas import Series
 
 def replace_heading_error(heading_values: Series) -> Series:
     """
-    Fix heading error code 511 by adding values that are in between the last and next actual heading values.
+    Fix heading error code 511 by adding values in a linear fashion between the non-error points
 
-    Arguments:
-        heading_values (pandas Series):
-            Series of integers
+    :params:
+        heading_values as integers
 
     Returns:
         heading_values_fixed (pandas Series):

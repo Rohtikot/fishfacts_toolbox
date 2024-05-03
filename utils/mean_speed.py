@@ -8,7 +8,7 @@ def calculate_mean_speed_between_points(input_df: DataFrame) -> Series:
     Calculate the mean speed between two datapoints based on "timedelta" and "distance"
 
     :param input_df: A pandas DataFrame containing columns "timedelta" and "distance"
-    :return: A pandas Series as the mean_speed
+    :return: A pandas Series with mean speed in knots
     """
 
     input_df = input_df.copy()
