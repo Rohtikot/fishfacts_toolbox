@@ -1,4 +1,3 @@
-import pandas as pd
 from nautical_calculations.basic import get_distance
 from pandas import DataFrame, Series
 
