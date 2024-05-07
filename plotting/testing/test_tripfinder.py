@@ -2,18 +2,18 @@ import pandas as pd
 import folium
 from plotting.utils import get_speed_color
 
-path_trips = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\trips\faroese_trips.xlsx"
+path_trips = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\trips\norwegian_trips.xlsx"
 df_trips = pd.read_excel(path_trips)
 
-path_ais = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Faroe Islands\Raw\vessel_4544_Christian Í Grótinum_20230501T0000-20231001T0000.xlsx"
+path_ais = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Norway\Raw\vessel_3844_Selvåg Senior_20230701T0000-20231115T0000.xlsx"
 df_ais = pd.read_excel(path_ais)
 
 
-vessel_name = 'Christian Í Grótinum'
+vessel_name = 'Selvåg Senior'
 
 df_trips = df_trips[df_trips['vessel_name'] == vessel_name]
 print(df_trips)
-m = folium.Map(location=(62, -7), tiles='cartodb dark_matter')
+m = folium.Map(location=(63, -8), zoom_start=5, tiles='cartodb dark_matter')
 
 # Create a dictionary to store FeatureGroups for each trip
 trip_feature_groups = {}
@@ -34,7 +34,6 @@ for idx, ro in df_trips.iterrows():
         lat = row['latitude']
         lon = row['longitude']
         speed = row['speed']
-        print(index)
         popup_text = f"<div style='width: 160px;'>" \
                      f"<b>Vessel:</b>: {vessel_name}<br>" \
                      f"<b>Date</b>: {date_time}<br>" \
