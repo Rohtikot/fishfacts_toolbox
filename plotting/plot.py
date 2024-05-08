@@ -61,19 +61,27 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
     eez_zones_path = os.path.join(par_file_dir, '../zones/eez_zones')
     eez_zones_folder = os.listdir(eez_zones_path)
 
-    # TODO: Make a layer (feature group) that contains fill color, so that fill colors can be enabled/disabled
     # Plot EEZ zones
-    polygon_group = folium.FeatureGroup(name='EEZ zones')
+    polygon_group_line = folium.FeatureGroup(name='EEZ zones (lines)')
+    polygon_group_fill = folium.FeatureGroup(name='EEZ zones (fill)')
+
     for zone in eez_zones_folder:
         polygon_df = pd.read_csv(os.path.join(eez_zones_path, zone))
         if zone.split('_')[0] == 'neafc':
-            polygon = plot_polygon(polygon_df, fill=True, fill_opacity=0.1, fill_color='white')
+            polygon_line = plot_polygon(polygon_df)
+            polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.1, fill_color='white')
         elif zone.split('_')[0] == 'joined':
-            polygon = plot_polygon(polygon_df, fill=True, fill_opacity=0.15, fill_color='green')
+            polygon_line = plot_polygon(polygon_df)
+            polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.15, fill_color='green')
         else:
-            polygon = plot_polygon(polygon_df, fill=True, fill_opacity=0.05, fill_color='turquoise')
-        polygon.add_to(polygon_group)
-        polygon_group.add_to(m)
+            polygon_line = plot_polygon(polygon_df)
+            polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.05, fill_color='turquoise')
+
+        polygon_line.add_to(polygon_group_line)
+        polygon_fill.add_to(polygon_group_fill)
+
+        polygon_group_line.add_to(m)
+        polygon_group_fill.add_to(m)
 
     return m
 
