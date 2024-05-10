@@ -137,15 +137,19 @@ def plot_polygon(input_df: DataFrame, color: str = 'grey', **kwargs) -> folium.P
 def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
     m = folium.Map(location=(lat, lon), zoom_start=5)
 
-    tiles = [
-        'OpenStreetMap',
-        'CartoDB positron',
-        'Esri NatGeoWorldMap',
-        'CartoDB dark_matter'
-    ]
+    tiles = {
+        'OpenStreetMap': 'Open Street Map',
+        'CartoDB.Positron': 'Positron',
+        'CartoDB.PositronNoLabels': 'Positron (no labels)',
+        'CartoDB.DarkMatter': 'Dark Matter',
+        'CartoDB.DarkMatterNoLabels': 'Dark Matter (no labels)',
+        'Stadia.StamenToner': 'Stamen Toner',
+        'Stadia.StamenTonerBackground': 'Stamen Toner (no labels)',
+        'Stadia.AlidadeSmoothDark': 'Alidade Smooth Dark',
+    }
 
-    for tile in tiles:
-        folium.TileLayer(tile).add_to(m)
+    for key, value in tiles.items():
+        folium.TileLayer(key, name=value).add_to(m)
 
     return m
 
