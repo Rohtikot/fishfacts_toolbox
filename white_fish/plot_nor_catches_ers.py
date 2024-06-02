@@ -9,6 +9,48 @@ pd.set_option('display.float_format', '{:,.3f}'.format)
 
 path = r"C:\Users\tokit\Desktop\Fishfacts\Friedata\elektronisk-rapportering-ers-2022-fangstmelding-dca.csv"
 
+radios = [
+    "LMAC",
+    "LDAL",
+    "LDDG",
+    "LHMF",
+    "LLOP",
+    "LLAJ",
+    "LLAY",
+    "LCMP",
+    "LLDH",
+    "LCLP",
+    "LDDF",
+    "3YHX",
+    "3YYB",
+    "LDCO",
+    "LNKS",
+    "LHXV",
+    "LMBG",
+    "LDBR",
+    "LDBT",
+    "LDSF",
+    "LDNV",
+    "LFGW",
+    "LJWI",
+    "LEBB",
+    "LEGQ",
+    "LJPH",
+    "LFBW",
+    "LLIA",
+    "LIPZ",
+    "LDAR",
+    "LFOC",
+    "JXRX",
+    "LFNT",
+    "LFRA",
+    "LFNX",
+    "LFPE",
+    "LGJY",
+    "LFVX",
+    "JXNX",
+]
+
 df = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
 df['start_time'] = pd.to_datetime(df['Startdato'] + ' ' + df['Startklokkeslett'], dayfirst=True)
 df['stop_time'] = pd.to_datetime(df['Stoppdato'] + ' ' + df['Stoppklokkeslett'], dayfirst=True)
@@ -16,6 +58,7 @@ df['stop_time'] = pd.to_datetime(df['Stoppdato'] + ' ' + df['Stoppklokkeslett'],
 df = df[
     (~df['start_time'].isna())
     & (df['Fartøynasjonalitet (kode)'] == 'NOR')
+    & (df['Radiokallesignal (ERS)'].isin(radios))
 ]
 print(df.head())
 index_columns = [
