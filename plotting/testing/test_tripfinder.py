@@ -2,14 +2,14 @@ import pandas as pd
 import folium
 from plotting.utils import get_speed_color
 
-path_trips = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\trips\norwegian_trips.xlsx"
+path_trips = r"C:\Users\tokit\OneDrive\Desktop\Oil testing 26. mar 2024\Frank Bonefaas - oil testing\bonefaas trips.xlsx"
 df_trips = pd.read_excel(path_trips)
 
-path_ais = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Norway\Raw\vessel_3844_Selvåg Senior_20230701T0000-20231115T0000.xlsx"
+path_ais = r"C:\Users\tokit\OneDrive\Desktop\Oil testing 26. mar 2024\Frank Bonefaas - oil testing\vessel_476_Frank Bonefaas_20230101T0000-20240101T0000.xlsx"
 df_ais = pd.read_excel(path_ais)
 
 
-vessel_name = 'Selvåg Senior'
+vessel_name = 'Frank Bonefaas'
 
 df_trips = df_trips[df_trips['vessel_name'] == vessel_name]
 print(df_trips)

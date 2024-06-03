@@ -75,7 +75,7 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
             polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.15, fill_color='green')
         else:
             polygon_line = plot_polygon(polygon_df)
-            polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.05, fill_color='turquoise')
+            polygon_fill = plot_polygon(polygon_df, weight=0.05, fill=True, fill_opacity=0.12, fill_color='turquoise')
 
         polygon_line.add_to(polygon_group_line)
         polygon_fill.add_to(polygon_group_fill)
@@ -146,6 +146,8 @@ def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
         'Stadia.StamenToner': 'Stamen Toner',
         'Stadia.StamenTonerBackground': 'Stamen Toner (no labels)',
         'Stadia.AlidadeSmoothDark': 'Alidade Smooth Dark',
+        'CartoDB.Voyager': 'Voyager',
+        'CartoDB.VoyagerNoLabels': 'Voyager (no labels)',
     }
 
     for key, value in tiles.items():
