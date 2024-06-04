@@ -9,10 +9,10 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.float_format', '{:,.0f}'.format)
 
 dfs = []
-years = [2018, 2019, 2020, 2021, 2022, 2023]
+years = [2022]
 for year in (pbar := tqdm(years, total=len(years))):
     pbar.set_description(f"Processing {year}")
-    path = fr"C:\Users\tokit\Desktop\Fishfacts\Friedata\fangst\fangstdata_{year}.csv"
+    path = fr"C:\Users\tokit\OneDrive\Desktop\Hvítfisk\norway_catch\catch\fangstdata_{year}.csv"
 
     df = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False, parse_dates=['Landingsdato'], dayfirst=True)
 
