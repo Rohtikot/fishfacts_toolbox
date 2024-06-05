@@ -1,3 +1,6 @@
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+from time import time
 import pandas as pd
 
 pd.set_option('display.width', None)
@@ -5,72 +8,44 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.float_format', '{:,.0f}'.format)
 
-main_species = [
-    'Sei',
-    'Nordøstarktisk torsk',
-    'Dypvannsreke',
-    'Snabeluer',
-    'Nordøstarktisk hyse',
-    'Uspesifisert fisk',
-    'Torsk',
-    'Hyse',
-    'Blåkveite',
-    'Uer (vanlig)',
-]
+radios = pd.read_csv('ffnft24.csv')['radio'].values.tolist()
+cols_to_select = ['Fartøynavn (ERS)', 'Radiokallesignal (ERS)', 'Art - FDIR', 'Startdato', 'Startklokkeslett', 'Hovedart FAO', 'Rundvekt', 'Fartøynasjonalitet (kode)']
 
-main_species_code = [
-    1032,  # Sei
-    102202,  # Nordøstarktisk torsk
-    2524,  # Dypvannsreke
-    2203,  # Snabeluer
-    102701,  # Nordøstarktisk hyse
-    2999,  # Uspesifisert fisk
-    1022,  # Torsk
-    1027,  # Hyse
-    2313,  # Blåkveite
-    2202,  # Uer (vanlig)
-]
+dfs = []
+years = [2020, 2021, 2022, 2023, 2024]
+for year in years:
+    path = fr"C:\Users\tokit\Desktop\Fishfacts\Friedata\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
+    df = pd.read_csv(path, delimiter=';', decimal=',', usecols=cols_to_select)
 
-
-def find_vessels_fishing_main_species(year: int):
-    path = fr"C:\Users\tokit\OneDrive\Desktop\Hvítfisk\norway_catch\catch\fangstdata_{year}.csv"
-
-    df = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
-
-    # Filters
     df = df[
-        (df['Fartøynasjonalitet'] == 'NORGE')
-        & (df['Fartøytype'].isin(['Fiskefartøy', 'Leiefartøy (Erstatningsfartøy)']))
-        & (df['Art - FDIR'].isin(main_species))
-        & (df['Produktvekt'] > 1000)
-        & (df['Største lengde'] >= 28)
-        ]
-
-    pivot_df = df.pivot_table(index=['Fartøynavn', 'Radiokallesignal (seddel)'], columns='Art - FDIR', values='Produktvekt',
-                              fill_value=0, aggfunc='sum').reset_index()
-
-    pivot_df['Total'] = pivot_df[main_species].sum(axis=1)
-    pivot_df.sort_values(by='Total', ascending=False, inplace=True)
-
-    return pivot_df
-
-
-def ers_departures_norway(year: int) -> pd.DataFrame:
-    path = fr"C:\Users\tokit\OneDrive\Desktop\Hvítfisk\norway_catch\ers\elektronisk-rapportering-ers-{year}-avgangsmelding-dep.csv"
-
-    df = pd.read_csv(path, delimiter=';', decimal=',', encoding='utf-8')
-    df = df[
-        (df['Målart - FDIR (kode)'].isin(main_species_code))
-        & (df['Fartøynasjonalitet (kode)'] == 'NOR')
+        # (df['Radiokallesignal (ERS)'].isin(radios))
+        (df['Fartøynasjonalitet (kode)'] == 'NOR')
     ]
 
-    return df
+    df['start'] = pd.to_datetime(df['Startdato'] + ' ' + df['Startklokkeslett'], format='%d.%m.%Y %H:%M')
+    df['year'] = year
+    df['day'] = df['start'].dt.dayofyear
 
+    dfs.append(df)
 
-if __name__ == '__main__':
-    # res = find_vessels_fishing_main_species(2023)
-    res = ers_departures_norway(2023)
-    vessels = res['Fartøynavn (ERS)'].unique()
-    for i in vessels:
-        print(i)
-    print(res.head(5))
+res_df = pd.concat(dfs)
+
+species = 'Makrell'
+
+num_years = len(years)
+fig, axes = plt.subplots(num_years, 1, figsize=(10, 6*num_years), sharex=True)
+groups = res_df.groupby('year')
+max_value = res_df[res_df['Art - FDIR'] == species].groupby('day')['Rundvekt'].sum().max()
+print(max_value)
+for ax, (year, group) in zip(axes, groups):
+    pivot = group.pivot_table(index='day', columns='Art - FDIR', values='Rundvekt', fill_value=0, aggfunc='sum').reset_index()
+    days = pivot['day'].unique()
+    ax.bar(days, pivot[species])
+    ax.set_ylim(0, max_value)
+    ax.set_title(f'Year: {year}')
+    ax.grid()
+
+axes[-1].set_xlabel('Day of Year')
+fig.tight_layout()
+plt.show()
+
