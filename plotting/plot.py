@@ -141,13 +141,13 @@ def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
         'OpenStreetMap': 'Open Street Map',
         'CartoDB.Positron': 'Positron',
         'CartoDB.PositronNoLabels': 'Positron (no labels)',
-        'CartoDB.DarkMatter': 'Dark Matter',
-        'CartoDB.DarkMatterNoLabels': 'Dark Matter (no labels)',
         'Stadia.StamenToner': 'Stamen Toner',
         'Stadia.StamenTonerBackground': 'Stamen Toner (no labels)',
         'Stadia.AlidadeSmoothDark': 'Alidade Smooth Dark',
         'CartoDB.Voyager': 'Voyager',
         'CartoDB.VoyagerNoLabels': 'Voyager (no labels)',
+        'CartoDB.DarkMatter': 'Dark Matter',
+        'CartoDB.DarkMatterNoLabels': 'Dark Matter (no labels)',
     }
 
     for key, value in tiles.items():
