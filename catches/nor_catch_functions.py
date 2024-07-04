@@ -11,14 +11,15 @@ def read_dca(path: str) -> pd.DataFrame:
     dataframe = pd.read_csv(path, delimiter=';', decimal=',')
 
     # Create necessary time columns from different time columns
-    dataframe['Start tid'] = dataframe['Startdato'] + ' ' + dataframe['Startklokkeslett']
-    dataframe['Stopp tid'] = dataframe['Stoppdato'] + ' ' + dataframe['Stoppklokkeslett']
-    dataframe['Start tid'] = pd.to_datetime(dataframe['Start tid'], format='%d.%m.%Y %H:%M')
-    dataframe['Stopp tid'] = pd.to_datetime(dataframe['Stopp tid'], format='%d.%m.%Y %H:%M')
-    dataframe['Meldingstid'] = dataframe['Meldingsdato'] + ' ' + dataframe['Meldingsklokkeslett']
-    dataframe['Meldingstid'] = pd.to_datetime(dataframe['Meldingstid'], format='%d.%m.%Y %H:%M')
+    dataframe['Start time'] = dataframe['Startdato'] + ' ' + dataframe['Startklokkeslett']
+    dataframe['Stop time'] = dataframe['Stoppdato'] + ' ' + dataframe['Stoppklokkeslett']
+    dataframe['Start time'] = pd.to_datetime(dataframe['Start time'], format='%d.%m.%Y %H:%M')
+    dataframe['Stop time'] = pd.to_datetime(dataframe['Stop time'], format='%d.%m.%Y %H:%M')
+    dataframe['Reporting time'] = dataframe['Meldingsdato'] + ' ' + dataframe['Meldingsklokkeslett']
+    dataframe['Reporting time'] = pd.to_datetime(dataframe['Reporting time'], format='%d.%m.%Y %H:%M')
 
     return dataframe
 
 
-
+# TODO: Add functions to read Fangstadata, ankomstmelding, avgangsmelding and overføringsmelding
+#  add function to update latest (2024) files.
