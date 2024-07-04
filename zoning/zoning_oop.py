@@ -15,7 +15,8 @@ class ZoneAssigner:
         self.ais_df = ais_df
         self.polygon_path = polygon_path
 
-    def which_zone(self, point: Point, polygons: list[NamedPolygon]):
+    @staticmethod
+    def which_zone(point: Point, polygons: list[NamedPolygon]):
         for polygon in polygons:
             if point.within(polygon.polygon):
                 return polygon.name
@@ -42,7 +43,8 @@ class ZoneAssigner:
 
         return polygons
 
-    def read_polygon_from_csv(self, csv_file_path):
+    @staticmethod
+    def read_polygon_from_csv(csv_file_path):
         _df = pd.read_csv(csv_file_path)
         coordinates = zip(_df['latitude'], _df['longitude'])
 
