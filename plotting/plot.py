@@ -30,7 +30,7 @@ def plot_vessel_track(input_df: DataFrame, m: folium.Map = None, vessel_name: st
         speed_color = get_speed_color(speed)
 
         popup_text = f"<div style='width: 160px;'>" \
-                     f"<b>Vessel name:</b>: {vessel_name}<br>" \
+                     f"<b>Vessel name:</b> {vessel_name}<br>" \
                      f"<b>Date</b>: {timestamp}<br>" \
                      f"<b>Latitude</b>: {lat}<br>" \
                      f"<b>Longitude</b>: {lon}<br>" \
@@ -63,7 +63,7 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
 
     # Plot EEZ zones
     polygon_group_line = folium.FeatureGroup(name='EEZ zones (lines)')
-    polygon_group_fill = folium.FeatureGroup(name='EEZ zones (fill)')
+    polygon_group_fill = folium.FeatureGroup(name='EEZ zones (fill)', show=False)
 
     for zone in eez_zones_folder:
         polygon_df = pd.read_csv(os.path.join(eez_zones_path, zone))
