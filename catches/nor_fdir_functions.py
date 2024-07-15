@@ -1,9 +1,17 @@
+import os
 import pandas as pd
 from datetime import datetime
 import requests
 from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
+
+
+def read_fangstdata(path: str) -> pd.DataFrame:
+    # TODO: Add "usecols" to pd.read_csv method to minimize memory usage
+    input_df = pd.read_csv(path, delimiter=';', decimal=',')
+    input_df = input_df[input_df['Fiskernasjonalitet'] == 'FÆRØYENE']
+    return input_df
 
 
 def read_dca(path: str) -> pd.DataFrame:
@@ -46,7 +54,7 @@ def read_departures(path: str) -> pd.DataFrame:
     return dataframe
 
 
-def download_fangstdata(year: int = datetime.now().year):
+def download_fangstdata(year: int = datetime.now().year) -> None:
     # Specify the URL of the ZIP file
     url = f"https://register.fiskeridir.no/uttrekk/fangstdata_{year}.csv.zip"
 
@@ -69,31 +77,53 @@ def download_fangstdata(year: int = datetime.now().year):
     # Go back to the beginning of the BytesIO object
     zip_file.seek(0)
 
+    save_dir = r"C:\Program Files (x86)\Fishfacts\catch\norway\catch"
+
     # Open the ZIP file
     with ZipFile(zip_file) as z:
-        # Find the CSV file in the ZIP archive
-        csv_filename = None
+        # Extract and save the CSV file
         for filename in z.namelist():
             if filename.endswith('.csv'):
-                csv_filename = filename
-                break
-
-        if csv_filename is None:
-            raise ValueError("No CSV file found in the ZIP archive")
-
-        # Extract the CSV file content
-        csv_content = z.read(csv_filename)
-
-    # Generate a filename with year
-    timestamp = datetime.now().year
-    output_filename = rf'C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_{timestamp}.csv'
-
-    # Save the CSV content to a file
-    with open(output_filename, 'wb') as file:
-        file.write(csv_content)
-
-    print(f"Downloaded and extracted the CSV file as {output_filename}")
+                # Extract and save the CSV file with its original name
+                file_path = os.path.join(save_dir, filename)
+                with z.open(filename) as source, open(file_path, 'wb') as target:
+                    target.write(source.read())
+                print(f"{filename} has been extracted and saved to {save_dir}.")
 
 
-# TODO: Add functions to read Fangstdata and overføringsmelding
-#  add function to update latest (2024) files.
+def download_ers(year: int = datetime.now().year) -> None:
+    url = f"https://register.fiskeridir.no/vms-ers/ERS/elektronisk-rapportering-ers-{year}.zip"
+    # Send a HEAD request to get the total file size
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+
+    # Get the total size of the file in bytes
+    total_size = int(response.headers.get('content-length', 0))
+
+    # Create a BytesIO object to store the downloaded content
+    zip_file = BytesIO()
+
+    # Download the file in chunks and update the progress bar
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc='Downloading ZIP file') as progress_bar:
+        for chunk in response.iter_content(chunk_size=8192):
+            zip_file.write(chunk)
+            progress_bar.update(len(chunk))
+
+    # Go back to the beginning of the BytesIO object
+    zip_file.seek(0)
+
+    save_dir = r"C:\Program Files (x86)\Fishfacts\catch\norway\ers"
+
+    # Open the ZIP file
+    with ZipFile(zip_file) as z:
+        # Extract and save the CSV files
+        for filename in z.namelist():
+            if filename.endswith('.csv'):
+                # Extract and save the CSV file with its original name
+                file_path = os.path.join(save_dir, filename)
+                with z.open(filename) as source, open(file_path, 'wb') as target:
+                    target.write(source.read())
+                print(f"{filename} has been extracted and saved to {save_dir}.")
+
+
+# TODO: Add functions to read Fangstdata
