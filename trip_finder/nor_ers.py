@@ -5,14 +5,15 @@ import pandas as pd
 def find_trip_departures(input_df: pd.DataFrame, vessel_name: str or list[str]) -> pd.DataFrame:
     if not isinstance(vessel_name, list):
         vessel_name = [vessel_name]
-    vessel_name = [i.title() for i in vessel_name]
+    vessel_name = [i.upper() for i in vessel_name]
 
     input_df = input_df.copy()
-    input_df['Fartøynavn'] = input_df['Fartøynavn'].str.title()
+    input_df['Fartøynavn'] = input_df['Fartøynavn'].str.upper()
     input_df['Departure time'] = pd.to_datetime(input_df['Avgangsdato'] + ' ' + input_df['Avgangsklokkeslett'], format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
         input_df['Fartøynavn'].isin(vessel_name)
+        | (input_df['Radiokallesignal']).isin(vessel_name)
         & (input_df['Kvantum type'].isna())
         ]
 
@@ -23,15 +24,16 @@ def find_trip_departures(input_df: pd.DataFrame, vessel_name: str or list[str]) 
 def find_trip_arrivals(input_df: pd.DataFrame, vessel_name: str or list[str]) -> pd.DataFrame:
     if not isinstance(vessel_name, list):
         vessel_name = [vessel_name]
-    vessel_name = [i.title() for i in vessel_name]
+    vessel_name = [i.upper() for i in vessel_name]
 
     input_df = input_df.copy()
-    input_df['Fartøynavn'] = input_df['Fartøynavn'].str.title()
+    input_df['Fartøynavn'] = input_df['Fartøynavn'].str.upper()
 
     input_df['Arrival time'] = pd.to_datetime(input_df['Ankomstdato'] + ' ' + input_df['Ankomstklokkeslett'], format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
         (input_df['Fartøynavn'].isin(vessel_name))
+        | (input_df['Radiokallesignal']).isin(vessel_name)
         & (input_df['Kvantum type'] == 'Fangst overført')
         ]
 
@@ -70,15 +72,3 @@ def find_trips_nor(year: int, vessel_name: str or list[str]) -> pd.DataFrame:
     result.sort_values(by=['Fartøynavn', 'Departure time'], inplace=True, ascending=[True, False])
 
     return result[['Fartøynavn', 'Radiokallesignal', 'Departure time', 'Arrival time']]
-
-
-vessels = [
-    'Granit',
-    'Kongsfjord',
-    'Nokasa',
-    'Atlantic Star'
-]
-
-
-res = find_trips_nor(2024, vessels)
-print(res)
