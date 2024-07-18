@@ -10,7 +10,6 @@ from tqdm import tqdm
 def read_fangstdata(path: str) -> pd.DataFrame:
     # TODO: Add "usecols" to pd.read_csv method to minimize memory usage
     input_df = pd.read_csv(path, delimiter=';', decimal=',')
-    input_df = input_df[input_df['Fiskernasjonalitet'] == 'FÆRØYENE']
     return input_df
 
 
@@ -34,7 +33,8 @@ def read_dca(path: str) -> pd.DataFrame:
     return dataframe
 
 
-def read_arrivals(path: str) -> pd.DataFrame:
+def read_arrivals(year: int) -> pd.DataFrame:
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-ankomstmelding-por.csv"
     dataframe = pd.read_csv(path, delimiter=';', decimal=',')
 
     # Create necessary time columns from different columns
@@ -44,7 +44,8 @@ def read_arrivals(path: str) -> pd.DataFrame:
     return dataframe
 
 
-def read_departures(path: str) -> pd.DataFrame:
+def read_departures(year: int) -> pd.DataFrame:
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-avgangsmelding-dep.csv"
     dataframe = pd.read_csv(path, delimiter=';', decimal=',')
 
     # Create necessary time columns from different columns
@@ -124,6 +125,5 @@ def download_ers(year: int = datetime.now().year) -> None:
                 with z.open(filename) as source, open(file_path, 'wb') as target:
                     target.write(source.read())
                 print(f"{filename} has been extracted and saved to {save_dir}.")
-
 
 # TODO: Add functions to read Fangstdata
