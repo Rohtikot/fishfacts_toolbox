@@ -70,7 +70,7 @@ def download_fangstdata(year: int = datetime.now().year) -> None:
     zip_file = BytesIO()
 
     # Download the file in chunks and update the progress bar
-    with tqdm(total=total_size, unit='B', unit_scale=True, desc='Downloading ZIP file') as progress_bar:
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc='Downloading catch data file') as progress_bar:
         for chunk in response.iter_content(chunk_size=8192):
             zip_file.write(chunk)
             progress_bar.update(len(chunk))
@@ -105,7 +105,7 @@ def download_ers(year: int = datetime.now().year) -> None:
     zip_file = BytesIO()
 
     # Download the file in chunks and update the progress bar
-    with tqdm(total=total_size, unit='B', unit_scale=True, desc='Downloading ZIP file') as progress_bar:
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc='Downloading ERS sheets') as progress_bar:
         for chunk in response.iter_content(chunk_size=8192):
             zip_file.write(chunk)
             progress_bar.update(len(chunk))
