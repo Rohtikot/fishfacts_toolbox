@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 def read_fangstdata(path: str) -> pd.DataFrame:
     # TODO: Add "usecols" to pd.read_csv method to minimize memory usage
-    input_df = pd.read_csv(path, delimiter=';', decimal=',')
+    input_df = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
     return input_df
 
 
@@ -20,7 +20,7 @@ def read_dca(path: str) -> pd.DataFrame:
     :param path: path to DCA CSV-file
     :return: Pandas data frame that contains columns "Start tid" and "Stopp tid" as datetime objects.
     """
-    dataframe = pd.read_csv(path, delimiter=';', decimal=',')
+    dataframe = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different time columns
     dataframe['start_time'] = dataframe['Startdato'] + ' ' + dataframe['Startklokkeslett']
@@ -35,7 +35,7 @@ def read_dca(path: str) -> pd.DataFrame:
 
 def read_arrivals(year: int) -> pd.DataFrame:
     path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-ankomstmelding-por.csv"
-    dataframe = pd.read_csv(path, delimiter=';', decimal=',')
+    dataframe = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different columns
     dataframe['arrival_time'] = dataframe['Ankomstdato'] + ' ' + dataframe['Ankomstklokkeslett']
@@ -46,7 +46,7 @@ def read_arrivals(year: int) -> pd.DataFrame:
 
 def read_departures(year: int) -> pd.DataFrame:
     path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-avgangsmelding-dep.csv"
-    dataframe = pd.read_csv(path, delimiter=';', decimal=',')
+    dataframe = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different columns
     dataframe['departure_time'] = dataframe['Avgangsdato'] + ' ' + dataframe['Avgangsklokkeslett']
