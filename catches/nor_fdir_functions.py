@@ -126,4 +126,10 @@ def download_ers(year: int = datetime.now().year) -> None:
                     target.write(source.read())
                 print(f"{filename} has been extracted and saved to {save_dir}.")
 
-# TODO: Add functions to read Fangstdata
+
+def isolate_tows(input_df: pd.DataFrame) -> pd.DataFrame:
+    """Find tows for vessels"""
+    pivot = input_df.pivot_table(index=['Fartøynavn (ERS)', 'Radiokallesignal', 'start_time', 'stop_time', 'Redskap FDIR'],
+                                 columns='Art FAO', values='Rundvekt', fill_value=0).reset_index()
+
+    return pivot
