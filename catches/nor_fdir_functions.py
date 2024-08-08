@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 from zipfile import ZipFile
 from io import BytesIO
@@ -132,6 +132,23 @@ def download_ers(year: int = datetime.now().year) -> None:
                 with z.open(filename) as source, open(file_path, 'wb') as target:
                     target.write(source.read())
                 print(f"{filename} has been extracted and saved to {save_dir}.")
+
+
+def ers_age() -> bool:
+    """
+    Find out if ers sheets are older than threshold (12 hours)
+
+    :return: None
+    """
+    # Get last modified date
+    time = os.path.getmtime(
+        r"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-2024-fangstmelding-dca.csv")
+
+    # Convert from Unix timestamp to datetime
+    time = datetime.fromtimestamp(time)
+
+    # If file is older than threshold return True
+    return datetime.now() - time > timedelta(hours=12)
 
 
 def isolate_tows(input_df: pd.DataFrame) -> pd.DataFrame:
