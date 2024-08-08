@@ -7,19 +7,26 @@ from io import BytesIO
 from tqdm import tqdm
 
 
-def read_fangstdata(path: str) -> pd.DataFrame:
+def read_fangstdata(year: int) -> pd.DataFrame:
     # TODO: Add "usecols" to pd.read_csv method to minimize memory usage
-    input_df = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
-    return input_df
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_{year}.csv"
+    cols = ['Landingsdato', 'Landingsklokkeslett']
+    dataframe = pd.read_csv(path, delimiter=';', decimal=',')
+
+    dataframe['landing_time'] = dataframe['Landingsdato'] + ' ' + dataframe['Landingsklokkeslett']
+    dataframe['landing_time'] = pd.to_datetime(dataframe['landing_time'], format='%d.%m.%Y %H:%M:%S')
+
+    return dataframe
 
 
-def read_dca(path: str) -> pd.DataFrame:
+def read_dca(year: int) -> pd.DataFrame:
     """
     Read ERS-DCA sheet and add time columns such as start and stop times for fishing activities.
 
-    :param path: path to DCA CSV-file
+    :param year: year to select for DCA CSV-file
     :return: Pandas data frame that contains columns "Start tid" and "Stopp tid" as datetime objects.
     """
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
     dataframe = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different time columns
