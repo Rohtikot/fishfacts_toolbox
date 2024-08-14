@@ -134,7 +134,7 @@ def download_ers(year: int = datetime.now().year) -> None:
                 print(f"{filename} has been extracted and saved to {save_dir}.")
 
 
-def file_age(file_name: str) -> bool or None:
+def file_age(file_name: str, hrs: int = 12) -> bool or None:
     """
     Find out if file is older than threshold (12 hours)
 
@@ -164,7 +164,7 @@ def file_age(file_name: str) -> bool or None:
     time = datetime.fromtimestamp(time)
 
     # If file is older than threshold return True
-    return datetime.now() - time > timedelta(hours=12)
+    return datetime.now() - time > timedelta(hours=hrs)
 
 
 def isolate_tows(input_df: pd.DataFrame) -> pd.DataFrame:
