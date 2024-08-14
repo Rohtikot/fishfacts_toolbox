@@ -66,24 +66,19 @@ class ZoneAssigner:
             lambda row: self.which_zone(Point(row['latitude'], row['longitude']), polygons), axis=1)
 
 
+# Example use
+r"""
 if __name__ == "__main__":
-    path = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Faroe Islands\Raw\vessel_9_Finnur Fríði_20230501T0000-20231001T0000.xlsx"
-    zones_dir = r'../zones/eez_zones'
-    harbors_dir = r'../zones/harbors'
-    pd.set_option('display.width', None)
-    df = pd.read_excel(path)
+    import os
+    path = r"C:\Users\tokit\OneDrive\Desktop\Klaksvíkskip"
+    for file in os.listdir(path):
+        file_path = os.path.join(path, file)
+        harbors_dir = r'../zones/harbors'
+        factory_path = r'../zones/factories/fo_factories.csv'
+        df = pd.read_excel(file_path)
 
-    zone_time1 = time()
-    df['eez_zone'] = ZoneAssigner(df, zones_dir).assign_zones()
-    zone_time2 = time()
-
-    harbor_time1 = time()
-    df['harbor'] = ZoneAssigner(df, harbors_dir).assign_zones()
-    harbor_time2 = time()
-
-    zone_time = zone_time2 - zone_time1
-    harbor_time = harbor_time2 - harbor_time1
-
-    print(df)
-
-    print(f"Zone time:{zone_time:10.01f} s\nHarbor time:{harbor_time:10.01f} s")
+        df['harbor'] = ZoneAssigner(df, harbors_dir).assign_zones()
+        df['factory'] = ZoneAssigner(df, factory_path).assign_zones('factory')
+        print(df)
+        df.to_excel(file_path, index=False)
+"""
