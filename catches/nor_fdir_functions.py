@@ -134,15 +134,31 @@ def download_ers(year: int = datetime.now().year) -> None:
                 print(f"{filename} has been extracted and saved to {save_dir}.")
 
 
-def ers_age() -> bool:
+def file_age(file_name: str) -> bool or None:
     """
-    Find out if ers sheets are older than threshold (12 hours)
+    Find out if file is older than threshold (12 hours)
+
+    :param: file_name (str): which file fangstdata (arg: fangst/catch) or ers (arg: ers)
 
     :return: None
     """
+
+    # check if file_name
+    allowed_values = ['fangst', 'catch', 'ers']
+
+    if file_name.lower() not in allowed_values:
+        raise ValueError(f"Invalid argument: '{file_name}'. Must be one of {allowed_values}.")
+
+    # check which file it is
+    if file_name.lower() in ['fangst', 'catch']:
+        file_path = r"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_2024.csv"
+    elif file_name.lower() in ['ers']:
+        file_path = r"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-2024-fangstmelding-dca.csv"
+    else:
+        return None
+
     # Get last modified date
-    time = os.path.getmtime(
-        r"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-2024-fangstmelding-dca.csv")
+    time = os.path.getmtime(file_path)
 
     # Convert from Unix timestamp to datetime
     time = datetime.fromtimestamp(time)
