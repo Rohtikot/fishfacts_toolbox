@@ -19,15 +19,19 @@ def read_fangstdata(year: int) -> pd.DataFrame:
     return dataframe
 
 
-def read_dca(year: int) -> pd.DataFrame:
+def read_dca(year: int, usecols: list[str] = None) -> pd.DataFrame:
     """
     Read ERS-DCA sheet and add time columns such as start and stop times for fishing activities.
 
+    :param usecols: list of columns to use
     :param year: year to select for DCA CSV-file
     :return: Pandas data frame that contains columns "Start tid" and "Stopp tid" as datetime objects.
     """
     path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
-    dataframe = pd.read_csv(path, delimiter=';', decimal=',', low_memory=False)
+    if usecols:
+        usecols = usecols + ['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Meldingsdato', 'Meldingsklokkeslett']
+
+    dataframe = pd.read_csv(path, usecols=usecols, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different time columns
     dataframe['start_time'] = dataframe['Startdato'] + ' ' + dataframe['Startklokkeslett']
@@ -165,11 +169,3 @@ def file_age(file_name: str, hrs: int = 12) -> bool or None:
 
     # If file is older than threshold return True
     return datetime.now() - time > timedelta(hours=hrs)
-
-
-def isolate_tows(input_df: pd.DataFrame) -> pd.DataFrame:
-    """Find tows for vessels"""
-    pivot = input_df.pivot_table(index=['Fartøynavn (ERS)', 'Radiokallesignal', 'start_time', 'stop_time', 'Redskap FDIR'],
-                                 columns='Art FAO', values='Rundvekt', fill_value=0).reset_index()
-
-    return pivot
