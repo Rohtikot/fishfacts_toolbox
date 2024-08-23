@@ -40,6 +40,10 @@ def read_dca(year: int, usecols: list[str] = None) -> pd.DataFrame:
     dataframe['stop_time'] = pd.to_datetime(dataframe['stop_time'], format='%d.%m.%Y %H:%M')
     dataframe['report_time'] = dataframe['Meldingsdato'] + ' ' + dataframe['Meldingsklokkeslett']
     dataframe['report_time'] = pd.to_datetime(dataframe['report_time'], format='%d.%m.%Y %H:%M')
+    dataframe['start_latitude'] = dataframe['Startposisjon bredde']
+    dataframe['start_longitude'] = dataframe['Startposisjon lengde']
+    dataframe['stop_latitude'] = dataframe['Stopposisjon bredde']
+    dataframe['stop_longitude'] = dataframe['Stopposisjon lengde']
 
     return dataframe
 
