@@ -1,6 +1,6 @@
 import pandas as pd
 
-"""Script to find overlapping vessel names from PowerBI table."""
+"""Script to find overlapping vessel names for same period from PowerBI table."""
 
 # Path to xlsx sheet that is a copy of PowerBI table
 path = r"C:\Users\tokit\OneDrive\Desktop\Projects\Vessels with common name in Act profile\double_id.xlsx"
