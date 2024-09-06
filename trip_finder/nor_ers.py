@@ -9,7 +9,8 @@ def find_trip_departures(input_df: pd.DataFrame, vessel_name: str or list[str]) 
 
     input_df = input_df.copy()
     input_df['Fartøynavn'] = input_df['Fartøynavn'].str.upper()
-    input_df['departure_time'] = pd.to_datetime(input_df['Avgangsdato'] + ' ' + input_df['Avgangsklokkeslett'], format='%d.%m.%Y %H:%M')
+    input_df['departure_time'] = pd.to_datetime(input_df['Avgangsdato'] + ' ' + input_df['Avgangsklokkeslett'],
+                                                format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
         input_df['Fartøynavn'].isin(vessel_name)
@@ -28,12 +29,13 @@ def find_trip_arrivals(input_df: pd.DataFrame, vessel_name: str or list[str]) ->
 
     input_df = input_df.copy()
     input_df['Fartøynavn'] = input_df['Fartøynavn'].str.upper()
-    input_df['arrival_time'] = pd.to_datetime(input_df['Ankomstdato'] + ' ' + input_df['Ankomstklokkeslett'], format='%d.%m.%Y %H:%M')
+    input_df['arrival_time'] = pd.to_datetime(input_df['Ankomstdato'] + ' ' + input_df['Ankomstklokkeslett'],
+                                              format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
         (input_df['Fartøynavn'].isin(vessel_name))
         | (input_df['Radiokallesignal']).isin(vessel_name)
-        # & (input_df['Kvantum type'] == 'Fangst overført')
+        & (input_df['Kvantum type'] == 'Fangst overført')
         ]
 
     return input_df
