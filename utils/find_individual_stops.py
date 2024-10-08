@@ -8,8 +8,11 @@ def find_stops(dataframe: DataFrame, min_stop_duration_minutes: int) -> DataFram
     speed_threshold = 0.1
     min_stop_duration = Timedelta(minutes=min_stop_duration_minutes)
 
+    # Calculate mean rolling speed to avoid spikes in data
+    dataframe['rolling_speed'] = dataframe['speed'].rolling(window=5).mean()
+
     # Find all rows that are below or equal to speed threshold.
-    dataframe['is_stopped'] = dataframe['speed'] <= speed_threshold
+    dataframe['is_stopped'] = dataframe['rolling_speed'] <= speed_threshold
 
     # Find starts and stops of port stops.
     dataframe['stop_start'] = (dataframe['is_stopped'] & ~dataframe['is_stopped'].shift(1).fillna(False))
