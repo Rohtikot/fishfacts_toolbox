@@ -3,14 +3,14 @@ from astral.sun import elevation
 from astral import LocationInfo
 
 
-def calculate_daylight(input_df: DataFrame) -> Series:
+def calculate_daylight(dataframe: DataFrame) -> Series:
     """
     Calculate the solar elevation for each row in the DataFrame and return a Series.
 
-    :param input_df: A DataFrame containing timestamp, latitude and longitude columns.
+    :param dataframe: A DataFrame containing timestamp, latitude and longitude columns.
     :return: A Series with the solar elevation in degrees for each row in the DataFrame.
     """
-    input_df = input_df.copy()
+    dataframe = dataframe.copy()
 
     def get_solar_elevation(row):
         location = LocationInfo(latitude=row['latitude'], longitude=row['longitude'])
@@ -19,4 +19,4 @@ def calculate_daylight(input_df: DataFrame) -> Series:
         return solar_elevation
 
     # Apply the get_solar_elevation function to each row and return the resulting Series
-    return input_df.apply(get_solar_elevation, axis=1)
+    return dataframe.apply(get_solar_elevation, axis=1)
