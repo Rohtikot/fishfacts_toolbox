@@ -1,6 +1,7 @@
 from math import ceil
 from pandas import DataFrame, cut
 import numpy as np
+from datetime import timedelta
 
 
 def speed_groups(dataframe: DataFrame, interval: float) -> DataFrame:
@@ -23,6 +24,7 @@ def speed_groups(dataframe: DataFrame, interval: float) -> DataFrame:
     # Cut dataframe by speed bins and calculate the time spent in that speed
     dataframe['speed_group'] = cut(dataframe['speed'], bins=speed_bins, right=False)
     dataframe['time_diff'] = dataframe['timestamp'].diff().dt.total_seconds() / 3600
+    dataframe = dataframe[dataframe['time_diff'] < 0.25]  # Filter large time gaps (15 min)
     dataframe.dropna(subset=['time_diff'], inplace=True)
 
     # Sum time spent in each speed bin by grouping
