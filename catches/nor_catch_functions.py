@@ -1,3 +1,4 @@
+from shapely.geometry import Point
 import os
 import pandas as pd
 from datetime import datetime, timedelta
@@ -27,9 +28,11 @@ def read_dca(year: int, usecols: list[str] = None) -> pd.DataFrame:
     :param year: year to select for DCA CSV-file
     :return: Pandas data frame that contains columns "Start tid" and "Stopp tid" as datetime objects.
     """
+
     path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
     if usecols:
-        usecols = usecols + ['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Meldingsdato', 'Meldingsklokkeslett']
+        usecols = usecols + ['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Startposisjon bredde',
+                             'Startposisjon lengde', 'Stopposisjon bredde', 'Stopposisjon lengde', 'Art - FDIR', 'Rundvekt']
 
     dataframe = pd.read_csv(path, usecols=usecols, delimiter=';', decimal=',', low_memory=False)
 
@@ -38,12 +41,15 @@ def read_dca(year: int, usecols: list[str] = None) -> pd.DataFrame:
     dataframe['stop_time'] = dataframe['Stoppdato'] + ' ' + dataframe['Stoppklokkeslett']
     dataframe['start_time'] = pd.to_datetime(dataframe['start_time'], format='%d.%m.%Y %H:%M')
     dataframe['stop_time'] = pd.to_datetime(dataframe['stop_time'], format='%d.%m.%Y %H:%M')
-    dataframe['report_time'] = dataframe['Meldingsdato'] + ' ' + dataframe['Meldingsklokkeslett']
-    dataframe['report_time'] = pd.to_datetime(dataframe['report_time'], format='%d.%m.%Y %H:%M')
-    dataframe['start_latitude'] = dataframe['Startposisjon bredde']
-    dataframe['start_longitude'] = dataframe['Startposisjon lengde']
-    dataframe['stop_latitude'] = dataframe['Stopposisjon bredde']
-    dataframe['stop_longitude'] = dataframe['Stopposisjon lengde']
+
+    # Create shapely Points for start and stop positions
+    dataframe['start_position'] = dataframe.apply(
+        lambda row: Point(row['Startposisjon lengde'], row['Startposisjon bredde']), axis=1)
+    dataframe['stop_position'] = dataframe.apply(
+        lambda row: Point(row['Stopposisjon lengde'], row['Stopposisjon bredde']), axis=1)
+
+    dataframe.drop(columns=['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Startposisjon lengde',
+                            'Startposisjon bredde', 'Stopposisjon lengde', 'Stopposisjon bredde'], inplace=True)
 
     return dataframe
 
