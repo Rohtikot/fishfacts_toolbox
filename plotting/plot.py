@@ -99,12 +99,13 @@ def plot_other_zones(m: folium.Map = None) -> folium.Map:
 
     # Plot other zones in a layer each
     for zone in other_zones_folder:
-        group_name = get_zone_name(zone)
-        polygon_group = folium.FeatureGroup(name=group_name, show=False)
-        polygon_df = pd.read_csv(os.path.join(other_zones_path, zone))
-        polygon = plot_polygon(polygon_df, color='yellow', fill=True, fill_opacity=0.2, fill_color='yellow')
-        polygon.add_to(polygon_group)
-        polygon_group.add_to(m)
+        if zone.endswith('.csv'):  # in case there are non-csv files in directory
+            group_name = get_zone_name(zone)
+            polygon_group = folium.FeatureGroup(name=group_name, show=False)
+            polygon_df = pd.read_csv(os.path.join(other_zones_path, zone))
+            polygon = plot_polygon(polygon_df, color='yellow', fill=True, fill_opacity=0.2, fill_color='yellow')
+            polygon.add_to(polygon_group)
+            polygon_group.add_to(m)
 
     return m
 
@@ -126,7 +127,7 @@ def plot_polygon(input_df: DataFrame, color: str = 'grey', **kwargs) -> folium.P
 
     # Plot polygon
     polygon = folium.Polygon(
-        locations=zip(input_df['latitude'], input_df['longitude']),
+        locations=input_df[['latitude', 'longitude']].values.tolist(),
         **merged_kwargs
     )
 
