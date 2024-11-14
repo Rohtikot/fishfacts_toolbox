@@ -12,14 +12,10 @@ def merge_df_on_timestamp(dataframe1: pd.DataFrame, dataframe2: pd.DataFrame, ti
     :return: merged dataframe from both vessels with common column "timestamp_rounded"
     """
 
-    # Make a rounded timestamp on each dataframe
-    dataframe1['timestamp_rounded'] = dataframe1['timestamp'].dt.round('5min')
-    dataframe2['timestamp_rounded'] = dataframe2['timestamp'].dt.round('5min')
-
     # Merge dataframes on the rounded timestamp column
-    merged_df = pd.merge_asof(dataframe1.sort_values('timestamp_rounded'),
-                              dataframe2.sort_values('timestamp_rounded'),
-                              on='timestamp_rounded',
+    merged_df = pd.merge_asof(dataframe1.sort_values('timestamp'),
+                              dataframe2.sort_values('timestamp'),
+                              on='timestamp',
                               direction='nearest',
                               tolerance=pd.Timedelta(f'{time_tolerance_minutes}min'))
 
@@ -72,8 +68,8 @@ def find_close_encounters(dataframe1: pd.DataFrame, dataframe2: pd.DataFrame, ti
 
     # Group by group_id and find the start and stop times
     grouped = filtered_df.groupby('group_id').agg(
-        start_time=('timestamp_rounded', 'min'),
-        stop_time=('timestamp_rounded', 'max')
+        start_time=('timestamp', 'min'),
+        stop_time=('timestamp', 'max')
     ).reset_index(drop=True)
 
     return grouped
