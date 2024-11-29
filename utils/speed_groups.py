@@ -1,12 +1,11 @@
 from math import ceil
 from pandas import DataFrame, cut
 import numpy as np
-from datetime import timedelta
 
 
 def speed_groups(dataframe: DataFrame, interval: float) -> DataFrame:
     """
-    Return series containing
+    Return DataFrame containing speed groups and hours spent and percentage hereof in each speed group.
 
     :param dataframe:
     :param interval:
@@ -24,7 +23,7 @@ def speed_groups(dataframe: DataFrame, interval: float) -> DataFrame:
     # Cut dataframe by speed bins and calculate the time spent in that speed
     dataframe['speed_group'] = cut(dataframe['speed'], bins=speed_bins, right=False)
     dataframe['time_diff'] = dataframe['timestamp'].diff().dt.total_seconds() / 3600
-    dataframe = dataframe[dataframe['time_diff'] < 0.25]  # Filter large time gaps (15 min)
+    dataframe = dataframe[dataframe['time_diff'] < 0.25]  # Filter out large time gaps (15 min)
     dataframe.dropna(subset=['time_diff'], inplace=True)
 
     # Sum time spent in each speed bin by grouping
@@ -34,14 +33,16 @@ def speed_groups(dataframe: DataFrame, interval: float) -> DataFrame:
 
 
 r"""
-EXAMPLE WITH PLOT
+# EXAMPLE WITH PLOT
+if __name__ == '__main__':
+    from pandas import read_excel
+    import matplotlib.pyplot as plt
+    path = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Iceland\Raw\vessel_313_Jón Kjartansson SU111_20230615T0000-20230915T0000.xlsx"
+    df = read_excel(path)
+    speed_group = speed_groups(df, 0.2)
 
-path = r"C:\Users\tokit\OneDrive\Desktop\Rapportir\Sæson rapportir\Makrelur 2023\AIS\Iceland\Raw\vessel_313_Jón Kjartansson SU111_20230615T0000-20230915T0000.xlsx"
-df = read_excel(path)
-speed_group = speed_groups(df, 0.2)
+    speed_group.plot(kind='bar', color='blue', edgecolor='black')
+    plt.xticks(rotation=45, ha='right')
 
-speed_group.plot(kind='bar', color='blue', edgecolor='black')
-plt.xticks(rotation=45, ha='right')
-
-plt.show()
+    plt.show()
 """
