@@ -13,8 +13,7 @@ def find_trip_departures(input_df: pd.DataFrame, vessel_name: str or list[str]) 
                                                 format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
-        input_df['Fartøynavn'].isin(vessel_name)
-        | (input_df['Radiokallesignal']).isin(vessel_name)
+        (input_df['Fartøynavn'].isin(vessel_name) | (input_df['Radiokallesignal']).isin(vessel_name))
         & (input_df['Kvantum type'].isna())
         ]
 
@@ -33,8 +32,7 @@ def find_trip_arrivals(input_df: pd.DataFrame, vessel_name: str or list[str]) ->
                                               format='%d.%m.%Y %H:%M')
 
     input_df = input_df[
-        (input_df['Fartøynavn'].isin(vessel_name))
-        | (input_df['Radiokallesignal']).isin(vessel_name)
+        ((input_df['Fartøynavn'].isin(vessel_name)) | (input_df['Radiokallesignal']).isin(vessel_name))
         & (input_df['Kvantum type'] == 'Fangst overført')
         ]
 
@@ -47,12 +45,12 @@ def find_trips_nor(year: int, vessel_name: str or list[str]) -> pd.DataFrame:
         fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-avgangsmelding-dep.csv"
     ]
 
-    df_d = pd.read_csv(path[1], delimiter=';', decimal=',')
-    df_a = pd.read_csv(path[0], delimiter=';', decimal=',')
+    df_departures = pd.read_csv(path[1], delimiter=';', decimal=',')
+    df_arrivals = pd.read_csv(path[0], delimiter=';', decimal=',')
 
-    departures = find_trip_departures(df_d, vessel_name)
+    departures = find_trip_departures(df_departures, vessel_name)
     departures.drop_duplicates('departure_time', inplace=True)
-    arrivals = find_trip_arrivals(df_a, vessel_name)
+    arrivals = find_trip_arrivals(df_arrivals, vessel_name)
     arrivals.drop_duplicates('arrival_time', inplace=True)
 
     arrivals.sort_values(by='arrival_time', inplace=True)
