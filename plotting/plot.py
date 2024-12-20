@@ -147,9 +147,9 @@ def initialize_map(lat: float = 62.0, lon: float = -7.0) -> folium.Map:
         'Stadia.AlidadeSmoothDark': 'Alidade Smooth Dark',
         'CartoDB.Voyager': 'Voyager',
         'CartoDB.VoyagerNoLabels': 'Voyager (no labels)',
+        'OpenStreetMap.HOT': 'OpenStreetMap HOT',
         'CartoDB.DarkMatter': 'Dark Matter',
         'CartoDB.DarkMatterNoLabels': 'Dark Matter (no labels)',
-        'OpenStreetMap.HOT': 'OpenStreetMap HOT',
     }
 
     for key, value in tiles.items():
