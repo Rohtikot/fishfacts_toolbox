@@ -1,3 +1,4 @@
+import geopandas as gpd
 from pandas import DataFrame
 from plotting.utils import get_speed_color
 import pandas as pd
@@ -82,6 +83,61 @@ def plot_eez_zones(m: folium.Map = None) -> folium.Map:
 
         polygon_group_line.add_to(m)
         polygon_group_fill.add_to(m)
+
+    return m
+
+
+def plot_eez_zones_w_shorelines(m: folium.Map) -> folium.Map:
+    # Define a style function for customizing polygons
+    def style_function(feature):
+        return {
+            "fillColor": "turquoise",  # Fill color
+            "color": "grey",          # Border color
+            "weight": 0.05,           # Border thickness
+            "fillOpacity": 0.2        # Transparency
+        }
+
+    # Areas' ids from Marine Regions
+    ids = [
+        5690,
+        5684,
+        5683,
+        5675,
+        5676,
+        5687,
+        5694,
+        5674,
+        5686,
+        5669,
+        5668,
+        3293,
+        5696,
+        8435,
+        5681,
+        5680,
+        8437,
+        33181,
+        8438,
+        5677
+    ]
+
+    path = r"C:\Users\tokit\Downloads\World_EEZ_v12_20231025\World_EEZ_v12_20231025\eez_v12.shp"
+    df = gpd.read_file(path)
+
+    # Select multipolygons from each country
+    selected_df = df[(df['MRGID'].isin(ids))]
+
+    feature_group = folium.FeatureGroup(name="Selected EEZ Zones")
+
+    # Add each multipolygon to the map
+    for _, row in selected_df.iterrows():
+        folium.GeoJson(
+            row.geometry,
+            style_function=style_function,
+            name=f"Feature {row.name}"
+        ).add_to(feature_group)
+
+    feature_group.add_to(m)
 
     return m
 
