@@ -94,7 +94,7 @@ def plot_eez_zones_w_shorelines(m: folium.Map) -> folium.Map:
             "fillColor": "turquoise",  # Fill color
             "color": "grey",          # Border color
             "weight": 0.05,           # Border thickness
-            "fillOpacity": 0.2        # Transparency
+            "fillOpacity": 0.1        # Transparency
         }
 
     # Areas' ids from Marine Regions
