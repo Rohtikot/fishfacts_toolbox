@@ -8,33 +8,66 @@ from io import BytesIO
 from tqdm import tqdm
 
 
-def read_fangstdata(year: int) -> pd.DataFrame:
-    # TODO: Add "usecols" to pd.read_csv method to minimize memory usage
-    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_{year}.csv"
-    cols = ['Landingsdato', 'Landingsklokkeslett']
-    dataframe = pd.read_csv(path, delimiter=';', decimal=',')
+def read_fangstdata(year: int, use_specific_cols: list[str] | bool = None) -> pd.DataFrame:
+    """
+        Read FDIR catch sheet and add time column for landing timestamp.
 
+        :param year: year to select for DCA CSV-file
+        :param use_specific_cols: list of columns to use
+        :return: Pandas data frame of Norwegian catches containing custom "landing_time" columns as datetime object.
+    """
+
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_{year}.csv"
+
+    # Use specific columns that have been specified to minimize memory usage
+
+    always_include_cols = ['Landingsdato', 'Landingsklokkeslett', 'Fartøynavn', 'Radiokallesignal (seddel)',
+                           'Største lengde', 'Art - FDIR', 'Rundvekt', 'Fiskernasjonalitet', 'Mottakernasjonalitet',
+                           'Områdegruppering']
+
+    # Handle use_specific_cols
+    if use_specific_cols is True:
+        # Use only the default columns
+        use_specific_cols = always_include_cols
+    elif isinstance(use_specific_cols, list):
+        # Combine default and specific columns
+        use_specific_cols = always_include_cols + use_specific_cols
+    elif use_specific_cols is None:
+        # Do not use usecols (read all columns)
+        use_specific_cols = None
+    else:
+        raise ValueError("use_specific_cols must be a list of strings, True, or None.")
+
+    dataframe = pd.read_csv(path, usecols=use_specific_cols, delimiter=';', decimal=',')
+
+    # Create landing_time column that contains datetime objects
     dataframe['landing_time'] = dataframe['Landingsdato'] + ' ' + dataframe['Landingsklokkeslett']
     dataframe['landing_time'] = pd.to_datetime(dataframe['landing_time'], format='%d.%m.%Y %H:%M:%S')
+
+    dataframe.drop(columns=['Landingsdato', 'Landingsklokkeslett'], inplace=True)
 
     return dataframe
 
 
-def read_dca(year: int, usecols: list[str] = None) -> pd.DataFrame:
+def read_dca(year: int, use_specific_cols: list[str] | bool = None) -> pd.DataFrame:
     """
     Read ERS-DCA sheet and add time columns such as start and stop times for fishing activities.
 
-    :param usecols: list of columns to use
     :param year: year to select for DCA CSV-file
-    :return: Pandas data frame that contains columns "Start tid" and "Stopp tid" as datetime objects.
+    :param use_specific_cols: list of columns to use
+    :return: Pandas data frame that contains Norwegian catch operations with columns "Start tid" and "Stopp tid"
+            as datetime objects.
     """
 
-    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
-    if usecols:
-        usecols = usecols + ['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Startposisjon bredde',
-                             'Startposisjon lengde', 'Stopposisjon bredde', 'Stopposisjon lengde', 'Art - FDIR', 'Rundvekt']
+    always_include_cols = ['Startdato', 'Startklokkeslett', 'Stoppdato', 'Stoppklokkeslett', 'Startposisjon bredde',
+                           'Startposisjon lengde', 'Stopposisjon bredde', 'Stopposisjon lengde', 'Art - FDIR',
+                           'Rundvekt']
 
-    dataframe = pd.read_csv(path, usecols=usecols, delimiter=';', decimal=',', low_memory=False)
+    path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{year}-fangstmelding-dca.csv"
+    if use_specific_cols:
+        use_specific_cols = use_specific_cols + always_include_cols
+
+    dataframe = pd.read_csv(path, usecols=use_specific_cols, delimiter=';', decimal=',', low_memory=False)
 
     # Create necessary time columns from different time columns
     dataframe['start_time'] = dataframe['Startdato'] + ' ' + dataframe['Startklokkeslett']
