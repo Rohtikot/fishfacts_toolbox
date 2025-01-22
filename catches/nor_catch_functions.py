@@ -22,8 +22,8 @@ def read_fangstdata(year: int, use_specific_cols: list[str] | bool = None) -> pd
     # Use specific columns that have been specified to minimize memory usage
 
     always_include_cols = ['Landingsdato', 'Landingsklokkeslett', 'Fartøynavn', 'Radiokallesignal (seddel)',
-                           'Største lengde', 'Art - FDIR', 'Rundvekt', 'Fiskernasjonalitet', 'Mottakernasjonalitet',
-                           'Områdegruppering']
+                           'Registreringsmerke (seddel)', 'Største lengde', 'Art - FDIR', 'Rundvekt',
+                           'Fiskernasjonalitet', 'Mottakernasjonalitet', 'Områdegruppering']
 
     # Handle use_specific_cols
     if use_specific_cols is True:
