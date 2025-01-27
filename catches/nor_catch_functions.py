@@ -196,11 +196,14 @@ def file_age(file_name: str, hrs: int = 12) -> bool or None:
     if file_name.lower() not in allowed_values:
         raise ValueError(f"Invalid argument: '{file_name}'. Must be one of {allowed_values}.")
 
+    # get current year
+    current_year = datetime.now().year
+
     # check which file it is
     if file_name.lower() in ['fangst', 'catch']:
-        file_path = r"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_2024.csv"
+        file_path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\catch\fangstdata_{current_year}.csv"
     elif file_name.lower() in ['ers']:
-        file_path = r"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-2024-fangstmelding-dca.csv"
+        file_path = fr"C:\Program Files (x86)\Fishfacts\catch\norway\ers\elektronisk-rapportering-ers-{current_year}-fangstmelding-dca.csv"
     else:
         return None
 
@@ -212,3 +215,5 @@ def file_age(file_name: str, hrs: int = 12) -> bool or None:
 
     # If file is older than threshold return True
     return datetime.now() - time > timedelta(hours=hrs)
+
+file_age('fangst', hrs=12)
